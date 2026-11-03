@@ -9,6 +9,7 @@ import Input from "../../../ui/Input";
 import Button from "../../../ui/Button";
 import ErrorMessage from "../../../ui/ErrorMessage";
 import { useAuth } from "../../auth/hooks/useAuth";
+import { sameIdentity } from "../../../config/identity";
 import * as orgService from "../api/organization.api";
 import * as boardService from "../../boards/api/board.api";
 import * as membershipService from "../../memberships/api/membership.api";
@@ -62,9 +63,9 @@ export const Organization = () => {
 
   // Determine if current user is admin in this organization
   const currentMembership = members.find(
-    (m) => m.userId?._id === currentUserId || m.userId === currentUserId
+    (m) => sameIdentity(m.userId, currentUserId)
   );
-  const isAdmin = currentMembership?.role === "ADMIN";
+  const isAdmin = currentMembership?.status === "ACTIVE" && currentMembership?.role === "ADMIN";
 
   const fetchOrganizationData = useCallback(async () => {
     setLoading(true);

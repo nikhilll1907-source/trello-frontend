@@ -16,6 +16,7 @@ import EmptyState from "../../../ui/EmptyState";
 import ToastContainer from "../../../ui/Toast";
 import { useBoard } from "../hooks/useBoard";
 import { useAuth } from "../../auth/hooks/useAuth";
+import { sameIdentity } from "../../../config/identity";
 import * as orgService from "../../organizations/api/organization.api";
 import * as membershipService from "../../memberships/api/membership.api";
 import { Plus, ArrowLeft, Layers } from "lucide-react";
@@ -78,9 +79,9 @@ export const Board = () => {
 
         const currentUserId = user?.id || user?._id;
         const currentMember = (membersRes.data || []).find(
-          (m) => m.userId?._id === currentUserId || m.userId === currentUserId
+          (m) => sameIdentity(m.userId, currentUserId)
         );
-        setIsAdmin(currentMember?.role === "ADMIN");
+        setIsAdmin(currentMember?.status === "ACTIVE" && currentMember?.role === "ADMIN");
       } catch {
         // Non-fatal
       }

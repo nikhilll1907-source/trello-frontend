@@ -5,6 +5,7 @@ import ErrorMessage from "../../../ui/ErrorMessage";
 import ConfirmModal from "../../../ui/ConfirmModal";
 import * as membershipApi from "../api/membership.api";
 import { getApiErrorMessage } from "../../../api/axios";
+import { sameIdentity } from "../../../config/identity";
 import { User, Shield, Trash2, CheckCircle2 } from "lucide-react";
 
 export const MembersList = ({
@@ -69,7 +70,7 @@ export const MembersList = ({
       <div className="overflow-hidden border border-[#29374A] rounded-lg bg-[#141E2D]">
         <div className="divide-y divide-[#29374A]">
           {members.map((member) => {
-            const isMe = member.userId?._id === currentUserId;
+            const isMe = sameIdentity(member.userId, currentUserId);
             const isPending = member.status === "PENDING";
 
             return (

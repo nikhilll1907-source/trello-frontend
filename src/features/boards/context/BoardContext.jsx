@@ -6,6 +6,7 @@ import * as membershipService from "../../memberships/api/membership.api";
 import { createBoardWebSocket } from "../api/websocket";
 import { getApiErrorMessage } from "../../../api/axios";
 import { useAuth } from "../../auth/hooks/useAuth";
+import { sameIdentity } from "../../../config/identity";
 
 export const BoardContext = createContext(null);
 
@@ -98,7 +99,7 @@ export const BoardProvider = ({ children }) => {
               });
 
               // Do not show join notification for current user
-              if (joinedId === currentUserId) return;
+               if (sameIdentity(joinedId, currentUserId)) return;
 
               // Prevent duplicate toast if already shown recently
               const now = Date.now();
@@ -136,7 +137,7 @@ export const BoardProvider = ({ children }) => {
               );
 
               // Do not show leave notification for current user
-              if (leftId === currentUserId) return;
+               if (sameIdentity(leftId, currentUserId)) return;
 
               // Prevent duplicate toast if already shown recently
               const now = Date.now();

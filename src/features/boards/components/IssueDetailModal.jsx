@@ -8,6 +8,7 @@ import { useAuth } from "../../auth/hooks/useAuth";
 import ConfirmModal from "../../../ui/ConfirmModal";
 import { useComments } from "../../comments/hooks/useComments";
 import CommentComposer from "../../comments/components/CommentComposer";
+import { sameIdentity } from "../../../config/identity";
 import {
   MessageSquare,
   Trash2,
@@ -336,12 +337,8 @@ export const IssueDetailModal = ({ isOpen, onClose, issue, isAdmin = false }) =>
             ) : (
               comments.map((comment) => {
                 const author = membersMap[comment.userId];
-                const authorName = author?.name || (comment.userId === user?.id ? user.name : "Member");
-                const isAuthor =
-                  user &&
-                  (comment.userId === user.id ||
-                    comment.userId === user._id ||
-                    comment.userId?._id === user.id);
+                const authorName = author?.name || (sameIdentity(comment.userId, user) ? user.name : "Member");
+                const isAuthor = user && sameIdentity(comment.userId, user);
                 const canDelete = isAuthor || isAdmin;
 
                 const commentDate = comment.createdAt
