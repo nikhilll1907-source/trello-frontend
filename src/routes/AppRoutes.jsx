@@ -4,18 +4,18 @@ import ProtectedRoute from "./ProtectedRoute";
 import { useAuth } from "../hooks/useAuth";
 
 // Pages
-import Login from "../pages/Login";
-import Signup from "../pages/Signup";
-import VerifyEmail from "../pages/VerifyEmail";
-import ForgotPassword from "../pages/ForgotPassword";
-import ResetPassword from "../pages/ResetPassword";
-import Dashboard from "../pages/Dashboard";
-import Organization from "../pages/Organization";
-import Board from "../pages/Board";
-import AcceptInvitation from "../pages/AcceptInvitation";
+import Login from "../features/auth/pages/Login";
+import Signup from "../features/auth/pages/Signup";
+import VerifyEmail from "../features/auth/pages/VerifyEmail";
+import ForgotPassword from "../features/auth/pages/ForgotPassword";
+import ResetPassword from "../features/auth/pages/ResetPassword";
+import Dashboard from "../features/organizations/pages/Dashboard";
+import Organization from "../features/organizations/pages/Organization";
+import Board from "../features/boards/pages/Board";
+import AcceptInvitation from "../features/memberships/pages/AcceptInvitation";
 
 // Not found
-import Button from "../components/common/Button";
+import Button from "../ui/Button";
 import { Kanban, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 

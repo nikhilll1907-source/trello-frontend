@@ -1,7 +1,8 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-import { BoardProvider } from "./context/BoardContext";
+import { AuthProvider } from "./features/auth/context/AuthContext";
+import { BoardProvider } from "./features/boards/context/BoardContext";
+import { CommentsProvider } from "./features/comments/context/CommentsContext";
 import AppRoutes from "./routes/AppRoutes";
 
 function App() {
@@ -9,7 +10,9 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <BoardProvider>
-          <AppRoutes />
+          <CommentsProvider>
+            <AppRoutes />
+          </CommentsProvider>
         </BoardProvider>
       </AuthProvider>
     </BrowserRouter>

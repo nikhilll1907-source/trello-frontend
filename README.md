@@ -1,16 +1,38 @@
-# React + Vite
+# Trellis frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React + Vite frontend for the Trellis project-management workspace.
 
-Currently, two official plugins are available:
+## Configure the backend
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Copy `.env.example` to `.env.local` and set one backend origin:
 
-## React Compiler
+```bash
+VITE_API_URL=https://your-backend.onrender.com
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The frontend adds `/api` automatically when needed. The WebSocket endpoint is derived from the same origin (`https` → `wss`, `http` → `ws`). Set `VITE_WS_URL` only when the WebSocket server lives at a different URL.
 
-## Expanding the Oxlint configuration
+## Run locally
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+npm install
+npm run dev
+```
+
+The backend must allow the frontend origin through `FRONTEND_URL` and must have credentials enabled for the HTTP-only refresh-token cookie.
+
+## Source layout
+
+```text
+src/
+  features/       auth, boards, comments, memberships, organizations
+    */api         feature API contracts
+    */components  feature UI
+    */pages       route-level feature screens
+  ui/             shared controls, modals, loaders, and feedback
+  hooks/          shared React hooks
+  context/        shared application state
+  api/            Axios client and token refresh behavior
+  layouts/        authenticated and public shells
+  routes/         application route definitions
+```
