@@ -16,7 +16,7 @@ import EmptyState from "../../../ui/EmptyState";
 import ToastContainer from "../../../ui/Toast";
 import { useBoard } from "../hooks/useBoard";
 import { useAuth } from "../../auth/hooks/useAuth";
-import { sameIdentity } from "../../../config/identity";
+import { sameUser } from "../../../config/identity";
 import * as orgService from "../../organizations/api/organization.api";
 import * as membershipService from "../../memberships/api/membership.api";
 import { Plus, ArrowLeft, Layers } from "lucide-react";
@@ -77,9 +77,8 @@ export const Board = () => {
         ]);
         setOrgData(orgRes.data);
 
-        const currentUserId = user?.id || user?._id;
         const currentMember = (membersRes.data || []).find(
-          (m) => sameIdentity(m.userId, currentUserId)
+          (m) => sameUser(m.userId, user)
         );
         setIsAdmin(currentMember?.status === "ACTIVE" && currentMember?.role === "ADMIN");
       } catch {

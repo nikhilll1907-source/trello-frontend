@@ -18,3 +18,11 @@ export const sameIdentity = (left, right) => {
   const rightId = getIdentity(right);
   return Boolean(leftId && rightId && leftId === rightId);
 };
+
+export const sameUser = (memberUser, currentUser) => {
+  if (sameIdentity(memberUser, currentUser)) return true;
+
+  const memberEmail = memberUser?.email?.trim?.().toLowerCase?.();
+  const currentEmail = currentUser?.email?.trim?.().toLowerCase?.();
+  return Boolean(memberEmail && currentEmail && memberEmail === currentEmail);
+};

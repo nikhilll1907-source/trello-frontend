@@ -9,7 +9,7 @@ import Input from "../../../ui/Input";
 import Button from "../../../ui/Button";
 import ErrorMessage from "../../../ui/ErrorMessage";
 import { useAuth } from "../../auth/hooks/useAuth";
-import { sameIdentity } from "../../../config/identity";
+import { sameUser } from "../../../config/identity";
 import * as orgService from "../api/organization.api";
 import * as boardService from "../../boards/api/board.api";
 import * as membershipService from "../../memberships/api/membership.api";
@@ -63,7 +63,7 @@ export const Organization = () => {
 
   // Determine if current user is admin in this organization
   const currentMembership = members.find(
-    (m) => sameIdentity(m.userId, currentUserId)
+    (m) => sameUser(m.userId, user)
   );
   const isAdmin = currentMembership?.status === "ACTIVE" && currentMembership?.role === "ADMIN";
 
@@ -333,6 +333,7 @@ export const Organization = () => {
           <MembersList
             members={members}
             currentUserId={currentUserId}
+            currentUser={user}
             isAdmin={isAdmin}
             onMemberUpdated={(updated) =>
               setMembers((prev) =>
