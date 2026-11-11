@@ -7,6 +7,7 @@ import AddIssueModal from "../components/AddIssueModal";
 import IssueDetailModal from "../components/IssueDetailModal";
 import ActiveUsersModal from "../components/ActiveUsersModal";
 import BoardMenu from "../components/BoardMenu";
+import BoardAssistant from "../../ai/components/BoardAssistant";
 import Modal from "../../../ui/Modal";
 import Input from "../../../ui/Input";
 import Button from "../../../ui/Button";
@@ -277,6 +278,15 @@ export const Board = () => {
 
         {/* Real-time presence toasts */}
         <ToastContainer toasts={toasts} onDismiss={removeToast} />
+        {boardId && (
+          <BoardAssistant
+            key={boardId}
+            boardId={boardId}
+            boardTitle={
+              board?._id?.toString() === boardId ? board.title : undefined
+            }
+          />
+        )}
       </div>
     </DashboardLayout>
   );
