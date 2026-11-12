@@ -1,82 +1,178 @@
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getApiErrorMessage } from "../../../api/axios";
-import { sendBoardChatMessage } from "../api/ai.api";
+import {
+  getBoardConversation,
+  sendBoardChatMessage,
+} from "../api/ai.api";
 
 const getResponseText = (content) => {
   if (typeof content === "string") {
-    return content.trim();
+    return content;
   }
 
   if (Array.isArray(content)) {
     return content
       .map((part) => (typeof part === "string" ? part : part?.text || ""))
-      .join("")
-      .trim();
+      .join("");
   }
 
   return "";
 };
 
+const normalizeHistory = (messages) =>
+  (Array.isArray(messages) ? messages : []).flatMap((message, index) => {
+    if (
+      (message?.role !== "user" && message?.role !== "assistant") ||
+      typeof message?.content !== "string" &&
+        !Array.isArray(message?.content)
+    ) {
+      return [];
+    }
+
+    const content = getResponseText(message.content);
+    if (!content.trim()) {
+      return [];
+    }
+
+    return [
+      {
+        id: `history-${index}-${message.role}`,
+        role: message.role,
+        content,
+      },
+    ];
+  });
+
 export const useBoardAssistant = (boardId) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [historyError, setHistoryError] = useState("");
   const [error, setError] = useState("");
-  const requestIdRef = useRef(0);
+  const [failedMessage, setFailedMessage] = useState(null);
+  const historyRequestRef = useRef(null);
+  const historyRequestIdRef = useRef(0);
+  const chatRequestIdRef = useRef(0);
   const sendingRef = useRef(false);
-  const activeBoardIdRef = useRef(boardId);
+  const chatAbortRef = useRef(null);
 
-  useLayoutEffect(() => {
-    activeBoardIdRef.current = boardId;
-    requestIdRef.current += 1;
-    sendingRef.current = false;
-
+  useEffect(() => {
     return () => {
-      requestIdRef.current += 1;
+      historyRequestIdRef.current += 1;
+      chatRequestIdRef.current += 1;
+      historyRequestRef.current?.controller.abort();
+      chatAbortRef.current?.abort();
     };
-  }, [boardId]);
+  }, []);
 
-  const sendMessage = useCallback(
-    async (value = input) => {
-      const message = value.trim();
-      if (!message || !boardId || sendingRef.current) {
+  const loadHistory = useCallback(async () => {
+    if (!boardId || historyLoaded || historyRequestRef.current) {
+      return;
+    }
+
+    const requestId = ++historyRequestIdRef.current;
+    const controller = new AbortController();
+    historyRequestRef.current = { controller, requestId };
+    setHistoryLoading(true);
+    setHistoryError("");
+
+    try {
+      const response = await getBoardConversation(boardId, {
+        signal: controller.signal,
+      });
+      if (
+        controller.signal.aborted ||
+        historyRequestIdRef.current !== requestId
+      ) {
         return;
       }
 
-      const requestId = ++requestIdRef.current;
+      setMessages(normalizeHistory(response?.messages));
+      setHistoryLoaded(true);
+    } catch (requestError) {
+      if (
+        !controller.signal.aborted &&
+        historyRequestIdRef.current === requestId
+      ) {
+        setHistoryError(
+          getApiErrorMessage(
+            requestError,
+            "Could not load this board's conversation. Please try again."
+          )
+        );
+      }
+    } finally {
+      if (historyRequestIdRef.current === requestId) {
+        historyRequestRef.current = null;
+        setHistoryLoading(false);
+      }
+    }
+  }, [boardId, historyLoaded]);
+
+  const sendMessage = useCallback(
+    async (value = input, { retry = false } = {}) => {
+      const message = value.trim();
+      if (
+        !message ||
+        !boardId ||
+        sendingRef.current ||
+        historyLoading ||
+        !historyLoaded ||
+        historyError ||
+        (failedMessage && !retry)
+      ) {
+        return;
+      }
+
+      const requestId = ++chatRequestIdRef.current;
+      const controller = new AbortController();
       const requestBoardId = boardId;
+      const messageId = retry ? failedMessage.id : `user-${requestId}`;
       sendingRef.current = true;
-      setMessages((current) => [
-        ...current,
-        { id: `${requestId}-user`, role: "user", content: message },
-      ]);
-      setInput("");
+      chatAbortRef.current = controller;
+
+      if (!retry) {
+        setMessages((current) => [
+          ...current,
+          { id: messageId, role: "user", content: message },
+        ]);
+        setInput("");
+      }
+
       setError("");
       setLoading(true);
 
       try {
-        const response = await sendBoardChatMessage(requestBoardId, message);
+        const response = await sendBoardChatMessage(
+          requestBoardId,
+          message,
+          { signal: controller.signal }
+        );
         if (
-          requestIdRef.current !== requestId ||
-          activeBoardIdRef.current !== requestBoardId
+          controller.signal.aborted ||
+          chatRequestIdRef.current !== requestId
         ) {
           return;
         }
 
         const reply = getResponseText(response?.data?.message);
-        if (!reply) {
+        if (!reply.trim()) {
           throw new Error("The assistant returned an empty response.");
         }
 
         setMessages((current) => [
           ...current,
-          { id: `${requestId}-assistant`, role: "assistant", content: reply },
+          { id: `assistant-${requestId}`, role: "assistant", content: reply },
         ]);
+        setFailedMessage(null);
       } catch (requestError) {
         if (
-          requestIdRef.current === requestId &&
-          activeBoardIdRef.current === requestBoardId
+          !controller.signal.aborted &&
+          chatRequestIdRef.current === requestId
         ) {
+          setFailedMessage({ id: messageId, content: message });
           setError(
             getApiErrorMessage(
               requestError,
@@ -85,24 +181,46 @@ export const useBoardAssistant = (boardId) => {
           );
         }
       } finally {
-        if (
-          requestIdRef.current === requestId &&
-          activeBoardIdRef.current === requestBoardId
-        ) {
+        if (chatRequestIdRef.current === requestId) {
           sendingRef.current = false;
+          chatAbortRef.current = null;
           setLoading(false);
         }
       }
     },
-    [boardId, input]
+    [
+      boardId,
+      failedMessage,
+      historyError,
+      historyLoaded,
+      historyLoading,
+      input,
+    ]
   );
+
+  const retryHistory = useCallback(() => {
+    return loadHistory();
+  }, [loadHistory]);
+
+  const retryMessage = useCallback(() => {
+    if (failedMessage) {
+      return sendMessage(failedMessage.content, { retry: true });
+    }
+  }, [failedMessage, sendMessage]);
 
   return {
     messages,
     input,
     setInput,
     loading,
+    historyLoading,
+    historyLoaded,
+    historyError,
     error,
+    failedMessage,
+    loadHistory,
     sendMessage,
+    retryHistory,
+    retryMessage,
   };
 };
