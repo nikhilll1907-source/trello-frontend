@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { getApiErrorMessage } from "../../../api/axios";
 import { sendBoardChatMessage } from "../api/ai.api";
 
@@ -26,10 +26,14 @@ export const useBoardAssistant = (boardId) => {
   const sendingRef = useRef(false);
   const activeBoardIdRef = useRef(boardId);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     activeBoardIdRef.current = boardId;
     requestIdRef.current += 1;
     sendingRef.current = false;
+
+    return () => {
+      requestIdRef.current += 1;
+    };
   }, [boardId]);
 
   const sendMessage = useCallback(

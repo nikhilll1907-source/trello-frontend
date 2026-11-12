@@ -280,7 +280,7 @@ export const Board = () => {
         <ToastContainer toasts={toasts} onDismiss={removeToast} />
         {boardId && (
           <BoardAssistant
-            key={boardId}
+            key={`${user?.id || user?._id || "anonymous"}:${boardId}`}
             boardId={boardId}
             boardTitle={
               board?._id?.toString() === boardId ? board.title : undefined
