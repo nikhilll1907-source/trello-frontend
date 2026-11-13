@@ -181,14 +181,14 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
                 className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`chat-message-content max-w-[88%] whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                  className={`max-w-[88%] whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                     message.role === "user"
                       ? "rounded-br-sm bg-primary text-white"
-                      : "rounded-bl-sm border border-navy-border bg-navy-card text-text-main"
+                      : "rounded-bl-sm border border-navy-border bg-[#141E2D] text-text-main"
                   }`}
                 >
                   {message.role === "assistant" ? (
-                    <div className="assistant-markdown">
+                    <div className="message-content assistant-markdown">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
@@ -283,7 +283,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
                       </ReactMarkdown>
                     </div>
                   ) : (
-                    message.content
+                    <div className="message-content">{message.content}</div>
                   )}
                 </div>
               </div>
