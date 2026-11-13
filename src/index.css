@@ -58,6 +58,11 @@
     -webkit-user-select: text;
     cursor: text;
   }
+  .user-message-content::selection,
+  .user-message-content *::selection {
+    background-color: #a5f3fc;
+    color: #0f172a;
+  }
 }
 
 /* Custom dark scrollbar */

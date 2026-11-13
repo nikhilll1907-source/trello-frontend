@@ -283,7 +283,9 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
                       </ReactMarkdown>
                     </div>
                   ) : (
-                    <div className="message-content">{message.content}</div>
+                    <div className="message-content user-message-content">
+                      {message.content}
+                    </div>
                   )}
                 </div>
               </div>
