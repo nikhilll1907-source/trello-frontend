@@ -53,6 +53,10 @@
   .eyebrow { @apply text-[10px] font-bold uppercase tracking-[0.16em] text-text-muted; }
   .page-title { @apply text-2xl sm:text-3xl font-extrabold tracking-tight text-text-main; }
   .input-dark { @apply w-full rounded-md border border-navy-border bg-navy-card px-3 py-2 text-sm text-text-main placeholder:text-text-muted outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20; }
+  .chat-message-content {
+    user-select: text;
+    -webkit-user-select: text;
+  }
 }
 
 /* Custom dark scrollbar */

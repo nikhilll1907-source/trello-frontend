@@ -181,7 +181,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
                 className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[88%] whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                  className={`chat-message-content max-w-[88%] whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                     message.role === "user"
                       ? "rounded-br-sm bg-primary text-white"
                       : "rounded-bl-sm border border-navy-border bg-navy-card text-text-main"
