@@ -73,6 +73,10 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
   const [minimized, setMinimized] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
+  const [actionsRefreshTrigger, setActionsRefreshTrigger] = useState(0);
+  const handleProposalCreated = useCallback(() => {
+    setActionsRefreshTrigger((current) => current + 1);
+  }, []);
   const {
     messages,
     input,
@@ -87,7 +91,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
     sendMessage,
     retryHistory,
     retryMessage,
-  } = useBoardAssistant(boardId);
+  } = useBoardAssistant(boardId, handleProposalCreated);
   const chatScrollRef = useRef(null);
   const messagesEndRef = useRef(null);
   const shouldFollowMessagesRef = useRef(true);
@@ -527,7 +531,10 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
             }`}
             aria-hidden={activeTab !== "actions"}
           >
-            <AIActionsPanel boardId={boardId} />
+            <AIActionsPanel
+              boardId={boardId}
+              refreshTrigger={actionsRefreshTrigger}
+            />
           </div>
         </>
         </section>

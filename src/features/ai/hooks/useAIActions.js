@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getApiErrorMessage } from "../../../api/axios";
 import {
   approveAIAction,
@@ -6,18 +6,22 @@ import {
   rejectAIAction,
 } from "../api/aiAction.api";
 
-export const useAIActions = (boardId) => {
+export const useAIActions = (boardId, refreshTrigger = 0) => {
   const [actions, setActions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [processingId, setProcessingId] = useState(null);
   const [processingType, setProcessingType] = useState(null);
+  const requestIdRef = useRef(0);
+  const lastBoardIdRef = useRef(null);
 
   const refresh = useCallback(
     async ({ showLoading = true } = {}) => {
+      const requestId = ++requestIdRef.current;
       if (!boardId) {
         setActions([]);
         setError("");
+        setLoading(false);
         return [];
       }
 
@@ -27,9 +31,15 @@ export const useAIActions = (boardId) => {
       try {
         const response = await getPendingAIActions(boardId);
         const nextActions = Array.isArray(response?.data) ? response.data : [];
+        if (requestId !== requestIdRef.current) {
+          return [];
+        }
         setActions(nextActions);
         return nextActions;
       } catch (requestError) {
+        if (requestId !== requestIdRef.current) {
+          return [];
+        }
         const message = getApiErrorMessage(
           requestError,
           "Could not load AI actions. Please try again."
@@ -37,22 +47,19 @@ export const useAIActions = (boardId) => {
         setError(message);
         return [];
       } finally {
-        setLoading(false);
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+        }
       }
     },
     [boardId]
   );
 
   useEffect(() => {
-    if (!boardId) {
-      setActions([]);
-      setError("");
-      setLoading(false);
-      return;
-    }
-
-    refresh({ showLoading: true });
-  }, [boardId, refresh]);
+    const boardChanged = lastBoardIdRef.current !== boardId;
+    lastBoardIdRef.current = boardId;
+    refresh({ showLoading: boardChanged || refreshTrigger === 0 });
+  }, [boardId, refresh, refreshTrigger]);
 
   const approveAction = useCallback(
     async (actionId) => {

@@ -137,7 +137,7 @@ const getActionDescription = (action) => {
 const isDestructiveAction = (actionType) =>
   ["DELETE_ISSUE", "DELETE_SECTION", "DELETE_COMMENT"].includes(actionType);
 
-export const AIActionsPanel = ({ boardId }) => {
+export const AIActionsPanel = ({ boardId, refreshTrigger }) => {
   const { sections, issuesBySection, refreshBoardData } = useBoard();
   const { comments, activeIssueId, loadComments } = useComments();
   const {
@@ -149,7 +149,7 @@ export const AIActionsPanel = ({ boardId }) => {
     refresh,
     approveAction,
     rejectAction,
-  } = useAIActions(boardId);
+  } = useAIActions(boardId, refreshTrigger);
   const [confirmAction, setConfirmAction] = useState(null);
   const [toasts, setToasts] = useState([]);
 
@@ -438,7 +438,7 @@ export const AIActionsPanel = ({ boardId }) => {
             />
           )}
 
-          {!loading && !error && actions.length > 0 && (
+          {!loading && actions.length > 0 && (
             <div className="space-y-3">
               {actions.map((action) => {
                 const summary = summarizeAction(action);

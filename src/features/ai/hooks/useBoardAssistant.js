@@ -43,7 +43,7 @@ const normalizeHistory = (messages) =>
     ];
   });
 
-export const useBoardAssistant = (boardId) => {
+export const useBoardAssistant = (boardId, onProposalCreated) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -157,6 +157,10 @@ export const useBoardAssistant = (boardId) => {
           return;
         }
 
+        if (response?.data?.proposalCreated === true) {
+          onProposalCreated?.();
+        }
+
         const reply = getResponseText(response?.data?.message);
         if (!reply.trim()) {
           throw new Error("The assistant returned an empty response.");
@@ -195,6 +199,7 @@ export const useBoardAssistant = (boardId) => {
       historyLoaded,
       historyLoading,
       input,
+      onProposalCreated,
     ]
   );
 
