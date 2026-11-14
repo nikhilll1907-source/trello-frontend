@@ -58,9 +58,17 @@ export const IssueDetailModal = ({ isOpen, onClose, issue, isAdmin = false }) =>
       setSectionId(issue.sectionId || "");
       setIsEditingContent(false);
       setError(null);
-      loadComments(issue._id);
     }
-  }, [issue, loadComments]);
+  }, [issue]);
+
+  useEffect(() => {
+    if (issue?._id) loadComments(issue._id);
+  }, [issue?._id, loadComments]);
+
+  const handleClose = () => {
+    loadComments(null);
+    onClose();
+  };
 
   if (!issue) return null;
 
@@ -117,7 +125,7 @@ export const IssueDetailModal = ({ isOpen, onClose, issue, isAdmin = false }) =>
     try {
       await removeIssue(issue._id, issue.sectionId);
       setDeleteIssueModalOpen(false);
-      onClose();
+      handleClose();
     } catch (err) {
       setError(err.message || "Failed to delete issue.");
       setDeletingIssue(false);
@@ -175,7 +183,7 @@ export const IssueDetailModal = ({ isOpen, onClose, issue, isAdmin = false }) =>
     <>
       <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title="Issue Details"
       maxWidth="max-w-2xl"
     >

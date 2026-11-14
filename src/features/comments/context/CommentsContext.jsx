@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useState } from "react";
+import React, { createContext, useCallback, useRef, useState } from "react";
 import * as commentApi from "../api/comment.api";
 import { getApiErrorMessage } from "../../../api/axios";
 
@@ -8,21 +8,38 @@ export const CommentsProvider = ({ children }) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [activeIssueId, setActiveIssueId] = useState(null);
+  const requestIdRef = useRef(0);
 
   const loadComments = useCallback(async (issueId) => {
-    if (!issueId) return;
+    const requestId = ++requestIdRef.current;
+    if (!issueId) {
+      setActiveIssueId(null);
+      setComments([]);
+      setLoading(false);
+      setError(null);
+      return true;
+    }
+
+    setActiveIssueId(issueId);
     setLoading(true);
     setError(null);
     setComments([]);
     try {
       const response = await commentApi.getIssueComments(issueId);
+      if (requestId !== requestIdRef.current) return false;
       setComments(response.data || []);
+      return true;
     } catch (requestError) {
+      if (requestId !== requestIdRef.current) return false;
       const message = getApiErrorMessage(requestError, "Unable to load comments.");
       setError(message);
       setComments([]);
+      return false;
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) {
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -60,6 +77,7 @@ export const CommentsProvider = ({ children }) => {
   return (
     <CommentsContext.Provider value={{
       comments,
+      activeIssueId,
       loading,
       error,
       loadComments,

@@ -27,6 +27,7 @@ const suggestions = [
 export const BoardAssistant = ({ boardId, boardTitle }) => {
   const [open, setOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
   const {
     messages,
@@ -61,30 +62,22 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
     }
   };
 
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={() => {
-          setOpen(true);
-          setMinimized(false);
-          loadHistory();
-        }}
-        className="fixed bottom-5 right-5 z-40 flex h-14 items-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-white shadow-xl shadow-black/30 transition hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-[#0B1220]"
-        aria-label="Open AI Board Assistant"
-      >
-        <Sparkles className="h-5 w-5" />
-        <span>Ask AI</span>
-      </button>
-    );
-  }
+  const assistantVisible = open && !minimized;
+  const launcherVisible = !open || minimized;
 
   return (
-    <section
-      className="fixed bottom-4 right-4 z-40 flex w-[calc(100vw-2rem)] max-w-[420px] flex-col overflow-hidden rounded-2xl border border-navy-border bg-navy-bg shadow-2xl shadow-black/50 sm:bottom-6 sm:right-6"
-      style={{ height: minimized ? "auto" : "min(680px, calc(100dvh - 2rem))" }}
-      aria-label="AI Board Assistant"
-    >
+    <>
+      {hasOpened && (
+        <section
+          className={`fixed bottom-4 right-4 z-40 flex h-[calc(100dvh-2rem)] max-h-[680px] w-[calc(100vw-2rem)] max-w-[420px] flex-col overflow-hidden rounded-2xl border border-navy-border bg-navy-bg shadow-2xl shadow-black/50 transition-[opacity,transform] duration-200 ease-out sm:bottom-6 sm:right-6 ${
+            assistantVisible
+              ? "pointer-events-auto scale-100 opacity-100"
+              : "pointer-events-none scale-[0.97] opacity-0"
+          }`}
+          aria-label="AI Board Assistant"
+          aria-hidden={!assistantVisible}
+          inert={!assistantVisible}
+        >
       <header className="flex items-center justify-between border-b border-navy-border bg-navy-card px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
@@ -102,8 +95,8 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
         <div className="ml-2 flex shrink-0 items-center gap-1">
           <button
             type="button"
-            onClick={() => setMinimized((current) => !current)}
-            className="rounded-lg p-2 text-text-secondary transition hover:bg-navy-elevated hover:text-text-main"
+            onClick={() => setMinimized(true)}
+            className="rounded-lg p-2 text-text-secondary transition hover:bg-navy-elevated hover:text-text-main focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={minimized ? "Expand assistant" : "Minimize assistant"}
           >
             <Minus className="h-4 w-4" />
@@ -111,7 +104,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-lg p-2 text-text-secondary transition hover:bg-navy-elevated hover:text-text-main"
+            className="rounded-lg p-2 text-text-secondary transition hover:bg-navy-elevated hover:text-text-main focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label="Close assistant"
           >
             <X className="h-4 w-4" />
@@ -119,7 +112,6 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
         </div>
       </header>
 
-      {!minimized && (
         <>
           <div className="flex border-b border-navy-border bg-navy-card px-2 pb-0 pt-2">
             <button
@@ -398,11 +390,35 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
               </p>
             </>
           ) : (
-            <AIActionsPanel boardId={boardId} boardTitle={boardTitle} />
+            <AIActionsPanel boardId={boardId} />
           )}
         </>
+        </section>
       )}
-    </section>
+
+      <button
+        type="button"
+        onClick={() => {
+          setOpen(true);
+          setMinimized(false);
+          setHasOpened(true);
+          loadHistory();
+        }}
+        className={`fixed bottom-4 right-4 z-40 inline-flex h-12 max-w-[calc(100vw-2rem)] items-center gap-2.5 rounded-xl border border-navy-border bg-navy-card px-4 text-sm font-semibold text-text-main shadow-xl shadow-black/40 transition-[opacity,transform,background-color,border-color] duration-200 ease-out hover:border-primary/40 hover:bg-navy-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B1220] sm:bottom-6 sm:right-6 ${
+          launcherVisible
+            ? "pointer-events-auto scale-100 opacity-100"
+            : "pointer-events-none scale-90 opacity-0"
+        }`}
+        aria-label={minimized ? "Restore AI Assistant" : "Open AI Board Assistant"}
+        aria-hidden={!launcherVisible}
+        inert={!launcherVisible}
+      >
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/15 text-primary">
+          <Sparkles className="h-4 w-4" />
+        </span>
+        <span className="whitespace-nowrap max-[360px]:sr-only">AI Assistant</span>
+      </button>
+    </>
   );
 };
 

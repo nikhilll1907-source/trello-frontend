@@ -11,6 +11,7 @@ export const useAIActions = (boardId) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [processingId, setProcessingId] = useState(null);
+  const [processingType, setProcessingType] = useState(null);
 
   const refresh = useCallback(
     async ({ showLoading = true } = {}) => {
@@ -60,10 +61,27 @@ export const useAIActions = (boardId) => {
       }
 
       setProcessingId(actionId);
+      setProcessingType("approve");
       setError("");
 
       try {
-        await approveAIAction(boardId, actionId);
+        const response = await approveAIAction(boardId, actionId);
+        const approvedAction = response?.data?.action;
+        if (response?.success === false) {
+          if (approvedAction) {
+            setActions((current) =>
+              current.map((action) =>
+                action._id === actionId ? approvedAction : action
+              )
+            );
+          }
+          await refresh({ showLoading: false });
+          throw new Error(response.message || "Could not execute this AI action.");
+        }
+
+        setActions((current) =>
+          current.filter((action) => action._id !== actionId)
+        );
         await refresh({ showLoading: false });
         return true;
       } catch (requestError) {
@@ -75,6 +93,7 @@ export const useAIActions = (boardId) => {
         return false;
       } finally {
         setProcessingId(null);
+        setProcessingType(null);
       }
     },
     [boardId, processingId, refresh]
@@ -87,10 +106,14 @@ export const useAIActions = (boardId) => {
       }
 
       setProcessingId(actionId);
+      setProcessingType("reject");
       setError("");
 
       try {
         await rejectAIAction(boardId, actionId);
+        setActions((current) =>
+          current.filter((action) => action._id !== actionId)
+        );
         await refresh({ showLoading: false });
         return true;
       } catch (requestError) {
@@ -102,6 +125,7 @@ export const useAIActions = (boardId) => {
         return false;
       } finally {
         setProcessingId(null);
+        setProcessingType(null);
       }
     },
     [boardId, processingId, refresh]
@@ -112,6 +136,7 @@ export const useAIActions = (boardId) => {
     loading,
     error,
     processingId,
+    processingType,
     refresh,
     approveAction,
     rejectAction,

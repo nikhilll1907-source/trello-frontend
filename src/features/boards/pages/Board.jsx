@@ -57,6 +57,21 @@ export const Board = () => {
 
   const [boardMenuOpen, setBoardMenuOpen] = useState(false);
 
+  useEffect(() => {
+    if (!selectedIssue) return;
+
+    const latestIssue = Object.values(issuesBySection)
+      .flat()
+      .find((issue) => issue?._id === selectedIssue._id);
+    if (latestIssue) {
+      if (latestIssue !== selectedIssue) setSelectedIssue(latestIssue);
+      return;
+    }
+
+    setSelectedIssue(null);
+    setIssueDetailModalOpen(false);
+  }, [issuesBySection, selectedIssue]);
+
   // Load board data and clean up WebSocket when unmounting board page
   useEffect(() => {
     if (boardId) {

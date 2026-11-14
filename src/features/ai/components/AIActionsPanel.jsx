@@ -9,6 +9,8 @@ import {
   XCircle,
 } from "lucide-react";
 import { useBoard } from "../../boards/hooks/useBoard";
+import { getApiErrorMessage } from "../../../api/axios";
+import { useComments } from "../../comments/hooks/useComments";
 import { useAIActions } from "../hooks/useAIActions";
 import Badge from "../../../ui/Badge";
 import Button from "../../../ui/Button";
@@ -135,10 +137,19 @@ const getActionDescription = (action) => {
 const isDestructiveAction = (actionType) =>
   ["DELETE_ISSUE", "DELETE_SECTION", "DELETE_COMMENT"].includes(actionType);
 
-export const AIActionsPanel = ({ boardId, boardTitle }) => {
-  const { sections, issuesBySection } = useBoard();
-  const { actions, loading, error, processingId, refresh, approveAction, rejectAction } =
-    useAIActions(boardId);
+export const AIActionsPanel = ({ boardId }) => {
+  const { sections, issuesBySection, refreshBoardData } = useBoard();
+  const { comments, activeIssueId, loadComments } = useComments();
+  const {
+    actions,
+    loading,
+    error,
+    processingId,
+    processingType,
+    refresh,
+    approveAction,
+    rejectAction,
+  } = useAIActions(boardId);
   const [confirmAction, setConfirmAction] = useState(null);
   const [toasts, setToasts] = useState([]);
 
@@ -161,6 +172,48 @@ export const AIActionsPanel = ({ boardId, boardTitle }) => {
 
   const getSectionById = (sectionId) =>
     sections.find((section) => section?._id === sectionId);
+
+  const refreshAfterApproval = async (action) => {
+    if (action.actionType.endsWith("_COMMENT")) {
+      const args = action.arguments || {};
+      const matchingComment = comments.find(
+        (comment) => String(comment._id) === String(args.commentId)
+      );
+      const commentIssueId =
+        action.actionType === "CREATE_COMMENT"
+          ? args.issueId
+          : matchingComment?.issueId?._id || matchingComment?.issueId;
+
+      if (
+        activeIssueId &&
+        commentIssueId &&
+        String(activeIssueId) === String(commentIssueId)
+      ) {
+        const didRefresh = await loadComments(activeIssueId);
+        if (!didRefresh) {
+          throw new Error("The comment changed, but its latest data could not be loaded.");
+        }
+      }
+      return;
+    }
+
+    await refreshBoardData(boardId);
+  };
+
+  const notifyApproved = async (action) => {
+    try {
+      await refreshAfterApproval(action);
+      pushToast("AI action approved and applied.");
+    } catch (requestError) {
+      pushToast(
+        `Action approved, but refresh failed: ${getApiErrorMessage(
+          requestError,
+          "latest board data could not be loaded."
+        )}`,
+        "error"
+      );
+    }
+  };
 
   const summarizeAction = (action) => {
     const type = action?.actionType;
@@ -297,7 +350,7 @@ export const AIActionsPanel = ({ boardId, boardTitle }) => {
 
     const didApprove = await approveAction(action._id);
     if (didApprove) {
-      pushToast("AI action approved and sent for execution.");
+      await notifyApproved(action);
     }
   };
 
@@ -306,7 +359,7 @@ export const AIActionsPanel = ({ boardId, boardTitle }) => {
 
     const didApprove = await approveAction(confirmAction._id);
     if (didApprove) {
-      pushToast("AI action approved and sent for execution.");
+      await notifyApproved(confirmAction);
     }
     setConfirmAction(null);
   };
@@ -320,23 +373,28 @@ export const AIActionsPanel = ({ boardId, boardTitle }) => {
     }
   };
 
-  const destructiveAction = confirmAction
-    ? isDestructiveAction(confirmAction.actionType)
-    : false;
-
   return (
     <>
       <div className="flex h-full flex-col overflow-hidden">
-        <div className="border-b border-navy-border bg-navy-card px-4 py-3">
-          <div className="flex items-start justify-between gap-3">
-            <div>
+        <div className="border-b border-navy-border bg-navy-card px-4 py-4 sm:px-5">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+            <div className="min-w-0 flex-1 basis-[200px]">
               <h3 className="text-sm font-bold text-text-main">AI Actions</h3>
-              <p className="mt-1 text-xs text-text-secondary">
+              <p className="mt-1 break-words text-xs leading-relaxed text-text-secondary">
                 Review changes suggested by your AI assistant before they are applied.
               </p>
             </div>
-            <div className="rounded-full border border-navy-border bg-[#111C2A] px-2.5 py-1 text-[10px] font-semibold text-text-main">
-              {loading ? "Loading..." : `${actions.length} pending`}
+            <div
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-400/10 px-2.5 py-1 text-[11px] font-semibold text-amber-200"
+              aria-live="polite"
+              aria-label={`${actions.length} pending AI actions`}
+            >
+              {loading ? (
+                <LoaderCircle className="h-3 w-3 animate-spin" />
+              ) : (
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
+              )}
+              {actions.length} pending
             </div>
           </div>
         </div>
@@ -392,14 +450,14 @@ export const AIActionsPanel = ({ boardId, boardTitle }) => {
                 return (
                   <article
                     key={action._id}
-                    className="rounded-xl border border-navy-border bg-navy-card p-4 shadow-sm shadow-black/10"
+                    className="min-w-0 rounded-xl border border-navy-border bg-navy-card p-4 shadow-sm shadow-black/10 transition-colors hover:border-navy-border/80"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted">
                           {ACTION_LABELS[action.actionType] || action.actionType}
                         </p>
-                        <h4 className="mt-1 text-base font-semibold text-text-main">
+                        <h4 className="mt-1 break-words text-base font-semibold text-text-main">
                           {summary.title}
                         </h4>
                       </div>
@@ -408,15 +466,15 @@ export const AIActionsPanel = ({ boardId, boardTitle }) => {
                       </Badge>
                     </div>
 
-                    <p className="mt-3 text-sm text-text-secondary">
+                    <p className="mt-3 break-words text-sm text-text-secondary">
                       {summary.description}
                     </p>
 
                     <div className="mt-3 space-y-1.5 text-xs text-text-secondary">
                       {summary.details.map((detail) => (
-                        <div key={detail} className="flex gap-2">
+                        <div key={detail} className="flex min-w-0 gap-2">
                           <span className="text-text-muted">•</span>
-                          <span>{detail}</span>
+                          <span className="min-w-0 break-words">{detail}</span>
                         </div>
                       ))}
                     </div>
@@ -440,7 +498,14 @@ export const AIActionsPanel = ({ boardId, boardTitle }) => {
                           disabled={isProcessing}
                           onClick={() => handleReject(action)}
                         >
-                          {isProcessing ? "Processing..." : "Reject"}
+                          {isProcessing && processingType === "reject" ? (
+                            <span className="inline-flex items-center gap-1.5">
+                              <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+                              Rejecting...
+                            </span>
+                          ) : (
+                            "Reject"
+                          )}
                         </Button>
                         <Button
                           variant={isDestructiveAction(action.actionType) ? "danger" : "primary"}
@@ -448,7 +513,14 @@ export const AIActionsPanel = ({ boardId, boardTitle }) => {
                           disabled={isProcessing}
                           onClick={() => handleApprove(action)}
                         >
-                          {isProcessing ? "Approving..." : "Approve"}
+                          {isProcessing && processingType === "approve" ? (
+                            <span className="inline-flex items-center gap-1.5">
+                              <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+                              Approving...
+                            </span>
+                          ) : (
+                            "Approve"
+                          )}
                         </Button>
                       </div>
                     )}

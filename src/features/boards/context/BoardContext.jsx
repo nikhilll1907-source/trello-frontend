@@ -268,6 +268,24 @@ export const BoardProvider = ({ children }) => {
     [user, connectWebSocket]
   );
 
+  const refreshBoardData = useCallback(async (boardId) => {
+    if (!boardId) return;
+
+    const currentRequestId = requestIdRef.current;
+    const sectionsRes = await sectionService.getBoardSections(boardId);
+    const fetchedSections = sectionsRes.data || [];
+    const issueEntries = await Promise.all(
+      fetchedSections.map(async (section) => {
+        const issuesRes = await issueService.getSectionIssues(section._id);
+        return [section._id, issuesRes.data || []];
+      })
+    );
+
+    if (currentRequestId !== requestIdRef.current) return;
+    setSections(fetchedSections);
+    setIssuesBySection(Object.fromEntries(issueEntries));
+  }, []);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -418,6 +436,7 @@ export const BoardProvider = ({ children }) => {
     removeToast,
     cleanupWebSocket,
     loadBoard,
+    refreshBoardData,
     addSection,
     editSection,
     removeSection,
