@@ -14,12 +14,13 @@ export const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!email.trim() || !password) {
       setError("Please fill in all fields.");
       return;
     }
@@ -28,9 +29,9 @@ export const Login = () => {
     setError(null);
 
     try {
-      await login({ email: email.trim(), password });
-       const destination = location.state?.from || "/dashboard";
-       navigate(destination, { replace: true });
+      await login({ email: email.trim(), password, rememberMe });
+      const destination = location.state?.from || "/dashboard";
+      navigate(destination, { replace: true });
     } catch (err) {
       const msg = err.message || "Failed to log in";
       setError(msg);
@@ -50,9 +51,9 @@ export const Login = () => {
   return (
     <AuthLayout
       title="Welcome back"
-      subtitle="Sign in with your workspace credentials to continue"
+      subtitle="Sign in to pick up where you left off."
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
         <Input
@@ -64,6 +65,8 @@ export const Login = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoFocus
+          autoComplete="email"
+          className="h-11 rounded-xl bg-[#0B1220] px-4"
         />
 
         <Input
@@ -74,16 +77,20 @@ export const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          autoComplete="current-password"
+          className="h-11 rounded-xl bg-[#0B1220] px-4"
         />
 
-        <div className="flex items-center justify-between text-xs pt-1">
-          <label className="flex items-center text-[#A3B1C5] cursor-pointer">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-1 text-xs">
+          <label className="inline-flex cursor-pointer items-center text-[#A3B1C5] transition-colors hover:text-[#E8EDF5]">
             <input
               id="remember-me"
               type="checkbox"
-              className="h-3.5 w-3.5 rounded border-[#29374A] bg-[#0A101B] text-primary focus:ring-primary focus:ring-offset-[#0B1220]"
+              checked={rememberMe}
+              onChange={(event) => setRememberMe(event.target.checked)}
+              className="h-4 w-4 rounded border-[#29374A] bg-[#0A101B] accent-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-[#141E2D]"
             />
-            <span className="ml-2">Remember me</span>
+            <span className="ml-2.5">Remember me</span>
           </label>
 
           <Link
@@ -97,7 +104,7 @@ export const Login = () => {
         <Button
           type="submit"
           variant="primary"
-          className="w-full mt-2"
+          className="mt-1 h-12 w-full rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30"
           size="lg"
           loading={loading}
           icon={LogIn}

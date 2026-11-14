@@ -1,9 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Bot,
+  Clock3,
+  GitBranch,
+  Layers,
+  LayoutDashboard,
+  Lightbulb,
   LoaderCircle,
+  MessageSquare,
+  MessagesSquare,
   Minus,
   RotateCcw,
+  Search,
   Send,
   Sparkles,
   X,
@@ -13,15 +27,45 @@ import remarkGfm from "remark-gfm";
 import AIActionsPanel from "./AIActionsPanel";
 import { useBoardAssistant } from "../hooks/useBoardAssistant";
 
-const suggestions = [
-  "Summarize my board.",
-  "Show all sections.",
-  "List all issues.",
-  "Find incomplete work.",
-  "Search for bugs.",
-  "Analyze my project progress.",
-  "Which section has the most issues?",
-  "Give me suggestions to improve this board.",
+const promptCategories = [
+  {
+    title: "Board overview",
+    icon: LayoutDashboard,
+    prompts: [
+      { text: "Give me a complete overview of this board.", icon: LayoutDashboard },
+      { text: "Which sections contain the most issues?", icon: Layers },
+    ],
+  },
+  {
+    title: "Task management",
+    icon: Search,
+    prompts: [
+      { text: "Find issues with no description.", icon: Search },
+      { text: "Show recently created or updated issues.", icon: Clock3 },
+    ],
+  },
+  {
+    title: "Project analysis",
+    icon: Lightbulb,
+    prompts: [
+      {
+        text: "Identify possible blockers from issue titles and descriptions.",
+        icon: GitBranch,
+      },
+      { text: "Summarize common themes across the issues.", icon: Lightbulb },
+    ],
+  },
+  {
+    title: "Team collaboration",
+    icon: MessageSquare,
+    prompts: [
+      { text: "Show recent comments and discussions.", icon: MessageSquare },
+      {
+        text: "Which issues have generated the most discussion?",
+        icon: MessagesSquare,
+      },
+    ],
+  },
 ];
 
 export const BoardAssistant = ({ boardId, boardTitle }) => {
@@ -44,26 +88,63 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
     retryHistory,
     retryMessage,
   } = useBoardAssistant(boardId);
+  const chatScrollRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const shouldFollowMessagesRef = useRef(true);
+  const previousChatActiveRef = useRef(false);
+  const previousHistoryLoadedRef = useRef(false);
+  const assistantVisible = open && !minimized;
+  const launcherVisible = !open || minimized;
+
+  const scrollToLatest = useCallback((behavior = "smooth") => {
+    messagesEndRef.current?.scrollIntoView({ behavior, block: "end" });
+  }, []);
+
+  useLayoutEffect(() => {
+    const chatActive = assistantVisible && activeTab === "chat";
+    const switchedToChat = chatActive && !previousChatActiveRef.current;
+    const historyJustLoaded =
+      chatActive && historyLoaded && !previousHistoryLoadedRef.current;
+
+    previousChatActiveRef.current = chatActive;
+    previousHistoryLoadedRef.current = historyLoaded;
+    if (!chatActive || (!switchedToChat && !historyJustLoaded)) return;
+
+    shouldFollowMessagesRef.current = true;
+    if (!historyLoaded || !messages.length) {
+      chatScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    } else {
+      scrollToLatest("auto");
+    }
+  }, [activeTab, assistantVisible, historyLoaded, messages.length, scrollToLatest]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading, historyLoading, historyError, open, minimized]);
+    if (
+      assistantVisible &&
+      activeTab === "chat" &&
+      messages.length > 0 &&
+      shouldFollowMessagesRef.current
+    ) {
+      scrollToLatest();
+    }
+  }, [messages, assistantVisible, activeTab, scrollToLatest]);
+
+  const sendChatMessage = (message) => {
+    shouldFollowMessagesRef.current = true;
+    sendMessage(message);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    sendMessage();
+    sendChatMessage();
   };
 
   const handleInputKeyDown = (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      sendMessage();
+      sendChatMessage();
     }
   };
-
-  const assistantVisible = open && !minimized;
-  const launcherVisible = !open || minimized;
 
   return (
     <>
@@ -117,6 +198,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
             <button
               type="button"
               onClick={() => setActiveTab("chat")}
+              aria-pressed={activeTab === "chat"}
               className={`flex-1 rounded-t-xl px-3 py-2 text-xs font-semibold transition ${
                 activeTab === "chat"
                   ? "bg-navy-bg text-text-main"
@@ -128,6 +210,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
             <button
               type="button"
               onClick={() => setActiveTab("actions")}
+              aria-pressed={activeTab === "actions"}
               className={`flex-1 rounded-t-xl px-3 py-2 text-xs font-semibold transition ${
                 activeTab === "actions"
                   ? "bg-navy-bg text-text-main"
@@ -138,10 +221,23 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
             </button>
           </div>
 
-          {activeTab === "chat" ? (
-            <>
+          <div
+            className={`min-h-0 flex-1 flex-col ${
+              activeTab === "chat" ? "flex" : "hidden"
+            }`}
+            aria-hidden={activeTab !== "chat"}
+          >
               <div
-                className="custom-scrollbar flex-1 space-y-4 overflow-y-auto px-4 py-4"
+                ref={chatScrollRef}
+                onScroll={(event) => {
+                  const container = event.currentTarget;
+                  shouldFollowMessagesRef.current =
+                    container.scrollHeight -
+                      container.scrollTop -
+                      container.clientHeight <=
+                    48;
+                }}
+                className="custom-scrollbar min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4"
                 aria-live="polite"
               >
                 {historyLoading && (
@@ -169,29 +265,64 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
                 )}
 
                 {!historyLoading && !historyError && messages.length === 0 && (
-                  <div className="space-y-4">
-                    <div className="rounded-2xl rounded-tl-sm border border-navy-border bg-navy-card px-4 py-3 text-sm leading-relaxed text-text-main">
-                      Ask me about this board. I can read board details, sections,
-                      issues, and comments.
-                    </div>
-                    <div>
-                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-text-secondary">
-                        <Sparkles className="h-3.5 w-3.5 text-primary" />
-                        Quick prompts
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {suggestions.map((suggestion) => (
-                          <button
-                            key={suggestion}
-                            type="button"
-                            disabled={loading || historyLoading || Boolean(historyError)}
-                            onClick={() => sendMessage(suggestion)}
-                            className="rounded-full border border-navy-border bg-navy-card px-3 py-2 text-left text-xs text-text-secondary transition hover:border-primary/60 hover:text-text-main disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            {suggestion}
-                          </button>
-                        ))}
+                  <div className="space-y-5">
+                    <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-navy-card to-navy-card p-4">
+                      <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                        <Sparkles className="h-4 w-4" />
                       </div>
+                      <h3 className="text-base font-bold tracking-tight text-text-main">
+                        Your AI Project Assistant
+                      </h3>
+                      <p className="mt-2 text-xs leading-relaxed text-text-secondary">
+                        Your workspace, understood. Ask me to analyze issues,
+                        compare sections, find themes in descriptions, or review
+                        discussions
+                        {boardTitle ? (
+                          <>
+                            {" "}on <span className="font-semibold text-text-main">{boardTitle}</span>
+                          </>
+                        ) : (
+                          " on this board"
+                        )}
+                        .
+                      </p>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {promptCategories.map((category) => {
+                        const CategoryIcon = category.icon;
+                        return (
+                          <section key={category.title} className="min-w-0">
+                            <h4 className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
+                              <CategoryIcon className="h-3.5 w-3.5 text-primary" />
+                              {category.title}
+                            </h4>
+                            <div className="space-y-2">
+                              {category.prompts.map((prompt) => {
+                                const PromptIcon = prompt.icon;
+                                return (
+                                  <button
+                                    key={prompt.text}
+                                    type="button"
+                                    disabled={
+                                      loading ||
+                                      historyLoading ||
+                                      Boolean(historyError)
+                                    }
+                                    onClick={() => sendChatMessage(prompt.text)}
+                                    className="group flex min-h-14 w-full items-start gap-2.5 rounded-xl border border-navy-border bg-navy-card px-3 py-2.5 text-left text-xs leading-relaxed text-text-secondary transition-colors hover:border-primary/50 hover:bg-navy-elevated hover:text-text-main focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+                                  >
+                                    <PromptIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted transition-colors group-hover:text-primary" />
+                                    <span className="min-w-0 break-words">
+                                      {prompt.text}
+                                    </span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </section>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -386,12 +517,18 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
                 </button>
               </form>
               <p className="bg-navy-card px-4 pb-3 text-[10px] text-text-muted">
-                Read-only assistant · Enter to send · Shift + Enter for a new line
+                Proposed changes always require your approval.
               </p>
-            </>
-          ) : (
+          </div>
+
+          <div
+            className={`min-h-0 flex-1 ${
+              activeTab === "actions" ? "block" : "hidden"
+            }`}
+            aria-hidden={activeTab !== "actions"}
+          >
             <AIActionsPanel boardId={boardId} />
-          )}
+          </div>
         </>
         </section>
       )}
