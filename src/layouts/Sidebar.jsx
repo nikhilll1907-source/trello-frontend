@@ -107,7 +107,7 @@ export const Sidebar = ({ onCloseMobile }) => {
                     onCloseMobile?.();
                   }}
                    className={`flex items-center gap-2 px-3 py-2 text-xs hover:bg-navy-elevated transition-colors ${
-                    isDashboard ? "text-primary font-semibold" : "text-[#E8EDF5]"
+                    isDashboard ? "text-primary font-semibold" : "text-text-main"
                   }`}
                 >
                    <Building2 className="w-3.5 h-3.5 text-text-secondary" />
@@ -127,7 +127,7 @@ export const Sidebar = ({ onCloseMobile }) => {
                      className={`flex items-center justify-between px-3 py-2 text-xs hover:bg-navy-elevated transition-colors ${
                       currentOrgId === org._id
                         ? "text-primary font-semibold bg-primary/10"
-                        : "text-[#E8EDF5]"
+                        : "text-text-main"
                     }`}
                   >
                     <span className="truncate">{org.name}</span>

@@ -105,7 +105,7 @@ export const ForgotPassword = () => {
         ) : (
           <form onSubmit={handleVerifyOtp} className="space-y-5">
             <div className="space-y-2">
-              <label className="block text-[10px] font-semibold uppercase tracking-wider text-[#A3B1C5] text-center">
+              <label className="block text-[10px] font-semibold uppercase tracking-wider text-text-secondary text-center">
                 6-Digit Reset Code
               </label>
               <OtpInput
@@ -139,14 +139,14 @@ export const ForgotPassword = () => {
                 setOtp("");
                 setError(null);
               }}
-              className="w-full text-center text-xs text-[#A3B1C5] hover:text-[#E8EDF5] cursor-pointer"
+              className="w-full text-center text-xs text-text-secondary hover:text-text-main cursor-pointer"
             >
               Try with a different email
             </button>
           </form>
         )}
 
-        <div className="pt-3 border-t border-[#29374A] text-center">
+        <div className="pt-3 border-t border-white/10 text-center">
           <Link
             to="/login"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary-hover transition-colors"

@@ -68,8 +68,8 @@ export const MembersList = ({
     <div className="space-y-4">
       <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
-      <div className="overflow-hidden border border-[#29374A] rounded-lg bg-[#141E2D]">
-        <div className="divide-y divide-[#29374A]">
+      <div className="overflow-hidden border border-white/10 rounded-lg bg-navy-elevated">
+        <div className="divide-y divide-white/10">
           {members.map((member) => {
             const isMe = sameUser(member.userId, currentUser || { id: currentUserId });
             const isPending = member.status === "PENDING";
@@ -77,28 +77,28 @@ export const MembersList = ({
             return (
               <div
                 key={member._id}
-                className="flex items-center justify-between p-4 hover:bg-[#192536]/40 transition-colors"
+                className="flex items-center justify-between p-4 hover:bg-navy-hover/40 transition-colors"
               >
                 {/* Member Details */}
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-md bg-[#192536] flex items-center justify-center text-[#E8EDF5] border border-[#29374A] font-semibold text-xs">
+                  <div className="w-8 h-8 rounded-md bg-navy-hover flex items-center justify-center text-text-main border border-white/10 font-semibold text-xs">
                     {member.userId?.name
                       ? member.userId.name.slice(0, 2).toUpperCase()
-                      : <User className="w-3.5 h-3.5 text-[#A3B1C5]" />}
+                      : <User className="w-3.5 h-3.5 text-text-secondary" />}
                   </div>
 
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-[#E8EDF5]">
+                      <span className="text-xs font-semibold text-text-main">
                         {member.userId?.name || "Unknown User"}
                       </span>
                       {isMe && (
-                        <span className="text-[10px] bg-[#192536] text-[#A3B1C5] border border-[#29374A] px-1.5 py-0.2 rounded">
+                        <span className="text-[10px] bg-navy-hover text-text-secondary border border-white/10 px-1.5 py-0.2 rounded">
                           You
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] text-[#A3B1C5] block font-mono mt-0.5">
+                    <span className="text-[11px] text-text-secondary block font-mono mt-0.5">
                       {member.userId?.email || "No email available"}
                     </span>
                   </div>
@@ -115,7 +115,7 @@ export const MembersList = ({
                       value={member.role}
                       disabled={actionLoading === member._id}
                       onChange={(e) => handleRoleChange(member._id, e.target.value)}
-                      className="text-xs font-medium bg-[#141E2D] border border-[#29374A] rounded px-2 py-1 text-[#E8EDF5] focus:outline-none focus:border-primary cursor-pointer"
+                      className="text-xs font-medium bg-navy-elevated border border-white/10 rounded px-2 py-1 text-text-main focus:outline-none focus:border-primary cursor-pointer"
                     >
                       <option value="MEMBER">MEMBER</option>
                       <option value="ADMIN">ADMIN</option>
@@ -145,7 +145,7 @@ export const MembersList = ({
                     <button
                       onClick={() => setMemberToRemove(member)}
                       disabled={actionLoading === member._id}
-                      className="p-1.5 text-[#A3B1C5] hover:text-status-error hover:bg-red-500/10 rounded transition-colors cursor-pointer"
+                      className="p-1.5 text-text-secondary hover:text-status-error hover:bg-red-500/10 rounded transition-colors cursor-pointer"
                       title="Remove member"
                     >
                       <Trash2 className="w-4 h-4" />

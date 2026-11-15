@@ -12,7 +12,7 @@ export const ToastContainer = ({ toasts = [], onDismiss }) => {
         <div
           key={toast.id}
           onClick={() => onDismiss?.(toast.id)}
-          className="pointer-events-auto flex items-center gap-2.5 px-3.5 py-2.5 bg-[#141E2D]/95 backdrop-blur-md border border-[#29374A] rounded-md shadow-xl text-xs font-medium text-[#E8EDF5] cursor-pointer hover:border-primary/50 transition-all animate-in fade-in slide-in-from-bottom-3 duration-200"
+          className="pointer-events-auto flex items-center gap-2.5 px-3.5 py-2.5 bg-navy-elevated/95 backdrop-blur-md border border-white/10 rounded-md shadow-xl text-xs font-medium text-text-main cursor-pointer hover:border-primary/50 transition-all animate-in fade-in slide-in-from-bottom-3 duration-200"
           role="status"
         >
           <span className="text-sm shrink-0 select-none">{toast.icon}</span>

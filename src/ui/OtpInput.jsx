@@ -81,12 +81,12 @@ export const OtpInput = ({
             onKeyDown={(e) => handleKeyDown(e, index)}
             autoFocus={autoFocus && index === 0}
             aria-label={`Digit ${index + 1} of ${length}`}
-            className={`w-10 h-12 sm:w-11 sm:h-13 text-center text-lg sm:text-xl font-bold font-mono rounded-md border bg-[#141E2D] text-[#E8EDF5] transition-all outline-none select-none ${
+            className={`w-10 h-12 sm:w-11 sm:h-13 text-center text-lg sm:text-xl font-bold font-mono rounded-md border bg-navy-elevated text-text-main transition-all outline-none select-none ${
               error
                 ? "border-status-error focus:ring-1 focus:ring-status-error focus:border-status-error"
                 : isFilled
                 ? "border-primary bg-primary/10 ring-1 ring-primary/40 text-primary"
-                : "border-[#29374A] hover:border-[#3D4F68] focus:border-primary focus:ring-1 focus:ring-primary"
+                : "border-white/10 hover:border-white/15 focus:border-primary focus:ring-1 focus:ring-primary"
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           />
         );

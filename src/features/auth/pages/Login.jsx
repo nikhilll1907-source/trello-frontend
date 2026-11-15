@@ -66,7 +66,7 @@ export const Login = () => {
           required
           autoFocus
           autoComplete="email"
-          className="h-11 rounded-xl bg-[#0B1220] px-4"
+          className="h-11 rounded-xl bg-navy-bg px-4"
         />
 
         <Input
@@ -78,17 +78,17 @@ export const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
           autoComplete="current-password"
-          className="h-11 rounded-xl bg-[#0B1220] px-4"
+          className="h-11 rounded-xl bg-navy-bg px-4"
         />
 
         <div className="flex flex-wrap items-center justify-between gap-3 pt-1 text-xs">
-          <label className="inline-flex cursor-pointer items-center text-[#A3B1C5] transition-colors hover:text-[#E8EDF5]">
+          <label className="inline-flex cursor-pointer items-center text-text-secondary transition-colors hover:text-text-main">
             <input
               id="remember-me"
               type="checkbox"
               checked={rememberMe}
               onChange={(event) => setRememberMe(event.target.checked)}
-              className="h-4 w-4 rounded border-[#29374A] bg-[#0A101B] accent-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-[#141E2D]"
+              className="h-4 w-4 rounded border-white/10 bg-navy-sidebar accent-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-[#181A20]"
             />
             <span className="ml-2.5">Remember me</span>
           </label>
@@ -112,7 +112,7 @@ export const Login = () => {
           {loading ? "Signing in..." : "Sign in to Workspace"}
         </Button>
 
-        <div className="pt-4 border-t border-[#29374A] text-center text-xs text-[#A3B1C5]">
+        <div className="pt-4 border-t border-white/10 text-center text-xs text-text-secondary">
           Don't have an account yet?{" "}
           <Link
             to="/signup"

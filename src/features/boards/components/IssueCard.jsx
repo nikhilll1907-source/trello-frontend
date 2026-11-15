@@ -3,9 +3,23 @@ import { MessageSquare, User, Circle } from "lucide-react";
 import { useBoard } from "../hooks/useBoard";
 
 export const IssueCard = ({ issue, commentCount = 0, onClick }) => {
-  const { membersMap } = useBoard();
+  const { membersMap, sections } = useBoard();
   const creator = membersMap[issue.createdBy];
   const creatorName = creator?.name || "Team Member";
+  const sectionName = sections.find((section) => section._id === issue.sectionId)?.name
+    ?.trim()
+    .toUpperCase()
+    .replace(/[_-]+/g, " ");
+  const statusColor = {
+    TODO: "#71717A",
+    "TO DO": "#71717A",
+    "IN PROGRESS": "#3B82F6",
+    VERIFICATION: "#F59E0B",
+    DONE: "#10B981",
+  }[sectionName];
+  const statusStyle = statusColor
+    ? { color: statusColor, fill: statusColor }
+    : undefined;
 
   return (
     <div
@@ -21,7 +35,7 @@ export const IssueCard = ({ issue, commentCount = 0, onClick }) => {
       aria-label={`Open issue ${issue.title}`}
       className="group bg-navy-elevated rounded-md p-3.5 border border-navy-border hover:border-primary/50 hover:bg-navy-hover transition-all cursor-pointer select-none"
     >
-       <div className="mb-2 flex items-start gap-2"><Circle className="mt-1 h-2.5 w-2.5 shrink-0 fill-primary text-primary" /><h4 className="text-sm font-semibold text-text-main group-hover:text-primary transition-colors leading-snug">
+       <div className="mb-2 flex items-start gap-2"><Circle className="mt-1 h-2.5 w-2.5 shrink-0 fill-primary text-primary" style={statusStyle} /><h4 className="text-sm font-semibold text-text-main group-hover:text-primary transition-colors leading-snug">
          {issue.title}
        </h4></div>
 
@@ -45,7 +59,7 @@ export const IssueCard = ({ issue, commentCount = 0, onClick }) => {
             title={`${commentCount} comments`}
           >
             <MessageSquare className="w-3 h-3" />
-            <span>{commentCount}</span>
+            <span className="tabular-nums">{commentCount}</span>
           </div>
         )}
       </div>

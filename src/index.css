@@ -5,13 +5,39 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --color-canvas: 11 12 14;
+    --color-sidebar: 16 17 20;
+    --color-column: 18 20 24;
+    --color-surface: 24 26 32;
+    --color-surface-hover: 30 33 40;
+    --color-primary: 37 99 235;
+    --color-primary-hover: 29 78 216;
+    --color-accent: 59 130 246;
+    --color-text-primary: 243 244 246;
+    --color-text-secondary: 142 146 159;
+    --color-border: 255 255 255;
+    --color-border-opacity: 0.07;
+    --color-border-hover-opacity: 0.15;
+  }
+
+  html {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  button, a, input, textarea, select {
+    --tw-ring-offset-color: rgb(var(--color-canvas));
+  }
+}
+
+@layer base {
   * {
-    border-color: #29374A;
+    border-color: rgb(var(--color-border) / var(--color-border-opacity));
   }
 
   body {
-    background-color: #0B1220;
-    color: #E8EDF5;
+    background-color: rgb(var(--color-canvas));
+    color: rgb(var(--color-text-primary));
     font-family: 'Manrope', system-ui, -apple-system, sans-serif;
     margin: 0;
     min-height: 100vh;
@@ -21,12 +47,12 @@
 
   button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
   button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
-    outline: 2px solid #2675F5;
+    outline: 2px solid rgb(var(--color-accent));
     outline-offset: 2px;
   }
 
   ::selection {
-    background-color: rgba(38, 117, 245, 0.35);
+    background-color: rgb(var(--color-accent) / 0.35);
     color: #FFFFFF;
   }
 
@@ -40,9 +66,9 @@
   select:-webkit-autofill,
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
-    -webkit-text-fill-color: #E8EDF5 !important;
-    -webkit-box-shadow: 0 0 0px 1000px #141E2D inset !important;
-    box-shadow: 0 0 0px 1000px #141E2D inset !important;
+    -webkit-text-fill-color: rgb(var(--color-text-primary)) !important;
+    -webkit-box-shadow: 0 0 0px 1000px rgb(var(--color-surface)) inset !important;
+    box-shadow: 0 0 0px 1000px rgb(var(--color-surface)) inset !important;
     transition: background-color 5000s ease-in-out 0s;
   }
 }
@@ -61,7 +87,7 @@
   .user-message-content::selection,
   .user-message-content *::selection {
     background-color: #a5f3fc;
-    color: #0f172a;
+    color: #0B0C0E;
   }
 }
 
@@ -72,15 +98,15 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #0A101B;
+  background: rgb(var(--color-sidebar));
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #29374A;
+  background: rgb(var(--color-border) / var(--color-border-hover-opacity, 0.15));
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #3D4F68;
+  background: rgb(var(--color-border) / 0.22);
 }

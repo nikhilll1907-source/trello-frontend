@@ -14,7 +14,7 @@ export const Button = ({
   ...props
 }) => {
   const baseStyles =
-    "inline-flex items-center justify-center font-medium rounded-md transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0B1220] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none active:scale-[0.98]";
+    "inline-flex items-center justify-center font-medium rounded-md transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-navy-bg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none active:scale-[0.98]";
 
   const sizeStyles = {
     xs: "px-2.5 py-1 text-xs gap-1.5 h-7",
@@ -25,13 +25,13 @@ export const Button = ({
 
   const variantStyles = {
     primary:
-      "bg-primary hover:bg-primary-hover text-white focus:ring-primary shadow-xs",
+      "bg-primary hover:bg-primary-hover text-white focus:ring-primary shadow-xs [box-shadow:inset_0_1px_0_rgba(255,255,255,0.2)]",
     secondary:
-      "bg-[#192536] hover:bg-[#1E2D42] text-[#E8EDF5] border border-[#29374A] focus:ring-[#29374A]",
+      "bg-navy-elevated hover:bg-navy-hover text-text-main border border-white/10 hover:border-white/15 focus:ring-white/10",
     danger:
       "bg-status-error hover:bg-red-600 text-white focus:ring-status-error",
     ghost:
-      "bg-transparent hover:bg-[#192536] text-[#A3B1C5] hover:text-[#E8EDF5] focus:ring-[#29374A]",
+      "bg-transparent hover:bg-navy-hover text-text-secondary hover:text-text-main focus:ring-white/10",
     link:
       "bg-transparent text-primary hover:underline p-0 focus:ring-0 active:scale-100",
   };

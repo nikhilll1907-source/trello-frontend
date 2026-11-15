@@ -309,7 +309,7 @@ export const IssueDetailModal = ({ isOpen, onClose, issue, isAdmin = false }) =>
                 <span className="text-text-secondary font-medium block mb-1 flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5" /> Created Date
                 </span>
-                <span className="font-medium text-text-main">{formattedDate}</span>
+                <span className="font-medium text-text-main tabular-nums">{formattedDate}</span>
               </div>
               {isAdmin && (
                 <button

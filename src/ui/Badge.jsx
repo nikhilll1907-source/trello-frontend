@@ -7,10 +7,10 @@ export const Badge = ({
   className = "",
 }) => {
   const variantStyles = {
-    default: "bg-[#192536] text-[#A3B1C5] border-[#29374A]",
-    admin: "bg-primary/15 text-[#60A5FA] border-primary/30 font-medium",
-    member: "bg-[#192536] text-[#A3B1C5] border-[#29374A]",
-    active: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+    default: "bg-navy-elevated text-text-secondary border-white/10",
+    admin: "bg-[rgba(16,185,129,0.12)] text-emerald-400 border-transparent font-medium",
+    member: "bg-navy-elevated text-text-secondary border-white/10",
+    active: "bg-[rgba(16,185,129,0.12)] text-emerald-400 border-transparent",
     pending: "bg-amber-500/15 text-amber-400 border-amber-500/30",
     error: "bg-red-500/15 text-red-400 border-red-500/30",
   };
@@ -23,7 +23,7 @@ export const Badge = ({
 
   return (
     <span
-      className={`inline-flex items-center font-medium border rounded-md ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
+      className={`inline-flex items-center font-medium border rounded-md tabular-nums ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
     >
       {children}
     </span>

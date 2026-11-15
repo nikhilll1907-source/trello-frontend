@@ -48,7 +48,7 @@ export const BoardList = ({ boards = [], isAdmin, onCreate, onEdit }) => {
             </p>
           </div>
           <div className="mt-6 flex items-center justify-between border-t border-navy-border pt-3 text-xs text-text-secondary">
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1 tabular-nums">
               <Calendar className="h-3.5 w-3.5" />
               {board.createdAt ? new Date(board.createdAt).toLocaleDateString() : "—"}
             </span>

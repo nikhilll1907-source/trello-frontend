@@ -67,10 +67,10 @@ export const ResetPassword = () => {
           <div className="w-11 h-11 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 mx-auto flex items-center justify-center">
             <CheckCircle2 className="w-6 h-6" />
           </div>
-          <h3 className="text-sm font-semibold text-[#E8EDF5]">
+          <h3 className="text-sm font-semibold text-text-main">
             Password reset successful!
           </h3>
-          <p className="text-xs text-[#A3B1C5]">
+          <p className="text-xs text-text-secondary">
             Your password has been changed. Redirecting to sign in...
           </p>
         </div>
@@ -119,7 +119,7 @@ export const ResetPassword = () => {
             {loading ? "Resetting password..." : "Update Password"}
           </Button>
 
-          <p className="text-center text-xs text-[#A3B1C5] pt-2 border-t border-[#29374A]">
+          <p className="text-center text-xs text-text-secondary pt-2 border-t border-white/10">
             Remember your password?{" "}
             <Link
               to="/login"

@@ -91,7 +91,7 @@ export const Section = ({
             <h3 className="text-xs font-bold uppercase tracking-[0.12em] text-text-secondary truncate">
               {section.name}
             </h3>
-            <span className="text-[11px] font-semibold text-text-secondary bg-navy-elevated px-1.5 py-0.5 rounded">
+            <span className="text-[11px] font-semibold text-text-secondary bg-navy-elevated px-1.5 py-0.5 rounded tabular-nums">
               {issues.length}
             </span>
           </div>

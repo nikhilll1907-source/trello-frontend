@@ -44,18 +44,18 @@ export const Modal = ({
 
       {/* Modal Dialog */}
       <div
-        className={`relative w-full ${maxWidth} bg-[#141E2D] rounded-lg shadow-2xl border border-[#29374A] z-10 my-8 overflow-hidden transform transition-all animate-in zoom-in-95 duration-150 text-[#E8EDF5]`}
+        className={`relative w-full ${maxWidth} bg-navy-elevated rounded-lg shadow-2xl border border-white/10 z-10 my-8 overflow-hidden transform transition-all animate-in zoom-in-95 duration-150 text-text-main`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#29374A] bg-[#0A101B]/50">
-          <h3 id={titleId} className="text-sm font-semibold tracking-wide text-[#E8EDF5]">{title}</h3>
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-navy-sidebar/50">
+          <h3 id={titleId} className="text-sm font-semibold tracking-wide text-text-main">{title}</h3>
           <button
             ref={closeButtonRef}
             onClick={onClose}
-            className="text-[#A3B1C5] hover:text-[#E8EDF5] p-1 rounded hover:bg-[#192536] transition-colors cursor-pointer"
+            className="text-text-secondary hover:text-text-main p-1 rounded hover:bg-navy-hover transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />

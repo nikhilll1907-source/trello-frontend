@@ -117,7 +117,7 @@ export const Signup = () => {
           {loading ? "Creating account..." : "Create Account"}
         </Button>
 
-        <div className="pt-4 border-t border-[#29374A] text-center text-xs text-[#A3B1C5]">
+        <div className="pt-4 border-t border-white/10 text-center text-xs text-text-secondary">
           Already have an account?{" "}
           <Link
             to="/login"

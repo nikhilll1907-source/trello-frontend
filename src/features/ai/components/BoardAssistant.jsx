@@ -154,7 +154,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
     <>
       {hasOpened && (
         <section
-          className={`fixed bottom-4 right-4 z-40 flex h-[calc(100dvh-2rem)] max-h-[680px] w-[calc(100vw-2rem)] max-w-[420px] flex-col overflow-hidden rounded-2xl border border-navy-border bg-navy-bg shadow-2xl shadow-black/50 transition-[opacity,transform] duration-200 ease-out sm:bottom-6 sm:right-6 ${
+          className={`fixed bottom-4 right-4 z-40 flex h-[calc(100dvh-2rem)] max-h-[680px] w-[calc(100vw-2rem)] max-w-[420px] flex-col overflow-hidden rounded-2xl border border-navy-border bg-navy-card shadow-2xl shadow-black/50 transition-[opacity,transform] duration-200 ease-out sm:bottom-6 sm:right-6 ${
             assistantVisible
               ? "pointer-events-auto scale-100 opacity-100"
               : "pointer-events-none scale-[0.97] opacity-0"
@@ -165,7 +165,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
         >
       <header className="flex items-center justify-between border-b border-navy-border bg-navy-card px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent">
             <Bot className="h-5 w-5" />
           </div>
           <div className="min-w-0">
@@ -203,9 +203,9 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
               type="button"
               onClick={() => setActiveTab("chat")}
               aria-pressed={activeTab === "chat"}
-              className={`flex-1 rounded-t-xl px-3 py-2 text-xs font-semibold transition ${
+              className={`relative flex-1 rounded-t-xl px-3 py-2 text-xs font-semibold transition ${
                 activeTab === "chat"
-                  ? "bg-navy-bg text-text-main"
+                  ? "relative bg-navy-bg text-text-main after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-accent"
                   : "text-text-secondary hover:text-text-main"
               }`}
             >
@@ -215,9 +215,9 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
               type="button"
               onClick={() => setActiveTab("actions")}
               aria-pressed={activeTab === "actions"}
-              className={`flex-1 rounded-t-xl px-3 py-2 text-xs font-semibold transition ${
+              className={`relative flex-1 rounded-t-xl px-3 py-2 text-xs font-semibold transition ${
                 activeTab === "actions"
-                  ? "bg-navy-bg text-text-main"
+                  ? "relative bg-navy-bg text-text-main after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-accent"
                   : "text-text-secondary hover:text-text-main"
               }`}
             >
@@ -340,7 +340,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
                       className={`max-w-[88%] whitespace-pre-wrap break-words rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                         message.role === "user"
                           ? "rounded-br-sm bg-primary text-white"
-                          : "rounded-bl-sm border border-navy-border bg-[#141E2D] text-text-main"
+                          : "rounded-bl-sm bg-navy-elevated text-text-main"
                       }`}
                     >
                       {message.role === "assistant" ? (
@@ -395,7 +395,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
                                 </a>
                               ),
                               pre: ({ children }) => (
-                                <pre className="my-3 max-w-full overflow-x-auto rounded-lg border border-navy-border bg-[#080d16] p-3 text-xs leading-relaxed">
+                                <pre className="my-3 max-w-full overflow-x-auto rounded-lg border border-navy-border bg-[#121418] p-3 text-xs leading-relaxed">
                                   {children}
                                 </pre>
                               ),
@@ -548,7 +548,7 @@ export const BoardAssistant = ({ boardId, boardTitle }) => {
           setHasOpened(true);
           loadHistory();
         }}
-        className={`fixed bottom-4 right-4 z-40 inline-flex h-12 max-w-[calc(100vw-2rem)] items-center gap-2.5 rounded-xl border border-navy-border bg-navy-card px-4 text-sm font-semibold text-text-main shadow-xl shadow-black/40 transition-[opacity,transform,background-color,border-color] duration-200 ease-out hover:border-primary/40 hover:bg-navy-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B1220] sm:bottom-6 sm:right-6 ${
+        className={`fixed bottom-4 right-4 z-40 inline-flex h-12 max-w-[calc(100vw-2rem)] items-center gap-2.5 rounded-xl border border-[rgba(255,255,255,0.12)] bg-navy-elevated px-4 text-sm font-semibold text-text-main shadow-xl shadow-black/40 transition-[opacity,transform,background-color,border-color] duration-200 ease-out hover:border-primary/40 hover:bg-navy-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0C0E] sm:bottom-6 sm:right-6 ${
           launcherVisible
             ? "pointer-events-auto scale-100 opacity-100"
             : "pointer-events-none scale-90 opacity-0"

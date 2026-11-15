@@ -115,19 +115,19 @@ export const VerifyEmail = () => {
         <ErrorMessage message={error} onDismiss={() => setError(null)} />
 
         {/* Email Display Card */}
-        <div className="bg-[#0A101B] border border-[#29374A] rounded-md p-3.5 text-center">
+        <div className="bg-navy-sidebar border border-white/10 rounded-md p-3.5 text-center">
           <div className="w-9 h-9 rounded-md bg-primary/15 text-primary border border-primary/30 flex items-center justify-center mx-auto mb-2">
             <Mail className="w-4 h-4" />
           </div>
-          <p className="text-[10px] text-[#64748B] font-semibold uppercase tracking-wider">
+          <p className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">
             Verification code sent to
           </p>
-          <p className="text-xs font-bold text-[#E8EDF5] mt-0.5 font-mono">
+          <p className="text-xs font-bold text-text-main mt-0.5 font-mono">
             {maskEmail(email)}
           </p>
 
-          <div className="mt-2.5 pt-2.5 border-t border-[#29374A] flex items-center justify-center gap-1.5 text-xs">
-            <span className="text-[#A3B1C5]">Wrong email?</span>
+          <div className="mt-2.5 pt-2.5 border-t border-white/10 flex items-center justify-center gap-1.5 text-xs">
+            <span className="text-text-secondary">Wrong email?</span>
             <button
               type="button"
               onClick={handleUseDifferentEmail}
@@ -142,10 +142,10 @@ export const VerifyEmail = () => {
         <form onSubmit={handleVerify} className="space-y-5">
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <label className="font-semibold uppercase tracking-wider text-[#A3B1C5] text-[10px]">
+              <label className="font-semibold uppercase tracking-wider text-text-secondary text-[10px]">
                 6-Digit Verification Code
               </label>
-              <span className="text-[#64748B] font-mono text-[11px]">
+              <span className="text-text-secondary font-mono text-[11px]">
                 {otp.length}/6 digits
               </span>
             </div>
@@ -177,12 +177,12 @@ export const VerifyEmail = () => {
         </form>
 
         {/* Resend Section */}
-        <div className="pt-2 border-t border-[#29374A] text-center">
-          <div className="flex items-center justify-center gap-1.5 text-xs text-[#A3B1C5]">
+        <div className="pt-2 border-t border-white/10 text-center">
+          <div className="flex items-center justify-center gap-1.5 text-xs text-text-secondary">
             <span>Didn't receive code?</span>
             {resendCooldown > 0 ? (
-              <span className="font-medium text-[#A3B1C5]">
-                Resend in <span className="font-mono font-semibold text-[#E8EDF5]">{resendCooldown}s</span>
+              <span className="font-medium text-text-secondary">
+                Resend in <span className="font-mono font-semibold text-text-main">{resendCooldown}s</span>
               </span>
             ) : (
               <button
@@ -202,7 +202,7 @@ export const VerifyEmail = () => {
         <div className="text-center">
           <Link
             to="/login"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#A3B1C5] hover:text-[#E8EDF5] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-text-secondary hover:text-text-main transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to sign in</span>

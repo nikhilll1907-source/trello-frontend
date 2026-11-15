@@ -34,13 +34,13 @@ export const ConfirmModal = ({
             )}
           </div>
           <div className="flex-1">
-            <p className="text-xs text-[#A3B1C5] leading-relaxed">
+            <p className="text-xs text-text-secondary leading-relaxed">
               {message}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-2.5 pt-3.5 border-t border-[#29374A]">
+        <div className="flex items-center justify-end gap-2.5 pt-3.5 border-t border-white/10">
           <Button variant="secondary" size="sm" onClick={onClose} disabled={loading}>
             {cancelText}
           </Button>

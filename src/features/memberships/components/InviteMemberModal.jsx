@@ -64,7 +64,7 @@ export const InviteMemberModal = ({
         <div>
           <label
             htmlFor="invite-role"
-            className="block text-xs font-semibold uppercase tracking-wider text-[#A3B1C5] mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-1.5"
           >
             Role
           </label>
@@ -72,14 +72,14 @@ export const InviteMemberModal = ({
             id="invite-role"
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="w-full px-3 py-2 text-sm bg-[#141E2D] border border-[#29374A] rounded-md text-[#E8EDF5] focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all cursor-pointer"
+            className="w-full px-3 py-2 text-sm bg-navy-elevated border border-white/10 rounded-md text-text-main focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all cursor-pointer"
           >
             <option value="MEMBER">MEMBER (Can view boards, issues, and post comments)</option>
             <option value="ADMIN">ADMIN (Full access to manage boards, sections, and members)</option>
           </select>
         </div>
 
-        <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#29374A]">
+        <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-white/10">
           <Button variant="secondary" size="sm" onClick={onClose} disabled={loading}>
             Cancel
           </Button>

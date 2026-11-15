@@ -407,9 +407,9 @@ export const AIActionsPanel = ({ boardId, refreshTrigger }) => {
                   key={index}
                   className="animate-pulse rounded-xl border border-navy-border bg-navy-card p-4"
                 >
-                  <div className="mb-3 h-3 w-20 rounded bg-[#243247]" />
-                  <div className="mb-2 h-4 w-40 rounded bg-[#243247]" />
-                  <div className="h-3 w-full rounded bg-[#243247]" />
+                  <div className="mb-3 h-3 w-20 rounded bg-navy-hover" />
+                  <div className="mb-2 h-4 w-40 rounded bg-navy-hover" />
+                  <div className="h-3 w-full rounded bg-navy-hover" />
                 </div>
               ))}
             </div>
@@ -450,7 +450,7 @@ export const AIActionsPanel = ({ boardId, refreshTrigger }) => {
                 return (
                   <article
                     key={action._id}
-                    className="min-w-0 rounded-xl border border-navy-border bg-navy-card p-4 shadow-sm shadow-black/10 transition-colors hover:border-navy-border/80"
+                    className="min-w-0 rounded-xl border border-navy-border bg-navy-card p-4 shadow-sm shadow-black/10 transition-colors hover:border-white/15 hover:bg-navy-hover"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
@@ -482,11 +482,11 @@ export const AIActionsPanel = ({ boardId, refreshTrigger }) => {
                     <div className="mt-4 grid gap-2 text-[11px] text-text-muted sm:grid-cols-2">
                       <div className="flex items-center gap-1.5">
                         <Clock3 className="h-3.5 w-3.5" />
-                        <span>Created: {formatDate(action.createdAt)}</span>
+                        <span className="tabular-nums">Created: {formatDate(action.createdAt)}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <AlertTriangle className="h-3.5 w-3.5" />
-                        <span>Expires: {formatDate(action.expiresAt)}</span>
+                        <span className="tabular-nums">Expires: {formatDate(action.expiresAt)}</span>
                       </div>
                     </div>
 

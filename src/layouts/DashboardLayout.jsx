@@ -8,7 +8,7 @@ export const DashboardLayout = ({ children, fullWidth = false }) => {
   const { user } = useAuth();
 
   return (
-    <div className="flex h-screen bg-[#0B1220] text-[#E8EDF5] overflow-hidden">
+    <div className="flex h-screen bg-navy-bg text-text-main overflow-hidden">
       {/* Desktop Sidebar (Persistent) */}
       <div className="hidden lg:block h-full shrink-0">
         <Sidebar />

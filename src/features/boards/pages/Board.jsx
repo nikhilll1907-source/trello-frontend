@@ -180,7 +180,7 @@ export const Board = () => {
         />
 
         {/* Board Canvas (Horizontally Scrollable) */}
-        <div className="flex-1 overflow-x-auto overflow-y-hidden p-4 sm:p-6 custom-scrollbar bg-[#0d1625]">
+        <div className="flex-1 overflow-x-auto overflow-y-hidden p-4 sm:p-6 custom-scrollbar bg-navy-bg">
           {sections.length === 0 ? (
             <div className="h-full flex items-center justify-center">
               <EmptyState
